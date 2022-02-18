@@ -1,0 +1,67 @@
+
+#####
+preview steps
+#####
+
+-----definites-----
+PROJECT_ID=kedro-kubeflow-334417
+IMAGE_NAME=custom-kubeflow
+IMAGE_NAME=gcr.io/$PROJECT_ID/$IMAGE_NAME
+IMAGE_TAG=v1
+
+in, cloud shell
+cd diab-kfp folder 
+cd diab-kfp folder
+now, build docker
+
+-----cmds-----
+docker build -t $IMAGE_NAME:$IMAGE_TAG .
+# o/p container - gcr.io/kedro-kubeflow-334417/custom-kubeflow:v1
+gcloud auth configure-docker --quiet
+docker push $IMAGE_NAME:$IMAGE_TAG
+
+
+
+
+
+### previous trials ###
+
+### cloud shell commands ###
+
+gcloud artifacts repositories create kfp-repo \
+   --repository-format=docker \
+   --location=$REGION \
+   --description="Docker repository"
+   
+gcloud auth configure-docker us-central1-docker.pkg.dev
+   
+export REGION=us-central1
+export IMG_REPO=kfp-repo
+export IMG_NAME=kfp-image
+export IMG_TAG=one
+export IMAGE_URI=gcr.io/$PROJECT_ID/$IMG_REPO/$IMG_NAME:$IMG_TAG
+export IMAGE_URI=$REGION-docker.pkg.dev$PROJECT_ID/$IMG_REPO/$IMG_NAME:$IMG_TAG
+export IMAGE_URI=$REGION-docker.pkg.dev$PROJECT_ID/$IMG_REPO/:$IMG_TAG
+export IMAGE_URI=gcr.io/$PROJECT_ID/$IMG_REPO/:$IMG_TAG
+
+# docker build trials
+docker build -t $REGION-docker.pkg.dev/${PROJECT_ID}/${IMG_REPO}/${IMG_NAME}:${IMG_TAG} .
+docker build -f Dockerfile -t $IMAGE_URI ./
+sudo docker build -f Dockerfile -t $IMAGE_URI ./
+docker build Dockerfile
+docker build -f Dockerfile
+docker build -f 'Dockerfile'
+docker build -f '/Dockerfile'
+docker build -t $IMAGE_URI
+docker build -t gcr.io/kedro-kubeflow-334417/kfp-repo:first .             --------------> YAYYYYYYYYYYYYYYY
+
+docker push gcr.io/kedro-kubeflow-334417/kfp-repo:first
+
+# container image - tag:first
+gcr.io/kedro-kubeflow-334417/kfp-repo@sha256:516e7bbf9341c619ca96b6d376a9aaf2c8a989ce3c931bdf7fd9a3af3891cb6d
+
+# tag:detail
+docker build -t gcr.io/kedro-kubeflow-334417/kfp-repo:detail .
+docker push gcr.io/kedro-kubeflow-334417/kfp-repo:detail
+container image -->
+gcr.io/kedro-kubeflow-334417/kfp-repo@sha256:2a903ef5b19d739c2772db8e6c395bd0704e6e54e880842d2070c1722d76d2aa

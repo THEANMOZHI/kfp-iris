@@ -1,0 +1,483 @@
+{
+  "pipelineSpec": {
+    "components": {
+      "comp-condition-1": {
+        "dag": {
+          "tasks": {
+            "condition-accuracy<50-3": {
+              "componentRef": {
+                "name": "comp-condition-accuracy-50-3"
+              },
+              "dependentTasks": [
+                "model-component"
+              ],
+              "inputs": {
+                "parameters": {
+                  "pipelineparam--accuracy_threshold": {
+                    "componentInputParameter": "pipelineparam--accuracy_threshold"
+                  },
+                  "pipelineparam--data-component-Output": {
+                    "componentInputParameter": "pipelineparam--data-component-Output"
+                  },
+                  "pipelineparam--model-component-Output": {
+                    "taskOutputParameter": {
+                      "outputParameterKey": "Output",
+                      "producerTask": "model-component"
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "condition-accuracy<50-3"
+              },
+              "triggerPolicy": {
+                "condition": "inputs.parameters['pipelineparam--model-component-Output'].double_value < inputs.parameters['pipelineparam--accuracy_threshold'].double_value"
+              }
+            },
+            "condition-accuracy>=50-2": {
+              "componentRef": {
+                "name": "comp-condition-accuracy-50-2"
+              },
+              "dependentTasks": [
+                "model-component"
+              ],
+              "inputs": {
+                "parameters": {
+                  "pipelineparam--accuracy_threshold": {
+                    "componentInputParameter": "pipelineparam--accuracy_threshold"
+                  },
+                  "pipelineparam--data-component-Output": {
+                    "componentInputParameter": "pipelineparam--data-component-Output"
+                  },
+                  "pipelineparam--model-component-Output": {
+                    "taskOutputParameter": {
+                      "outputParameterKey": "Output",
+                      "producerTask": "model-component"
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "condition-accuracy>=50-2"
+              },
+              "triggerPolicy": {
+                "condition": "inputs.parameters['pipelineparam--model-component-Output'].double_value >= inputs.parameters['pipelineparam--accuracy_threshold'].double_value"
+              }
+            },
+            "model-component": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-model-component"
+              },
+              "inputs": {
+                "parameters": {
+                  "bucket": {
+                    "componentInputParameter": "pipelineparam--bucket"
+                  },
+                  "xtest": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "X_test"
+                      }
+                    }
+                  },
+                  "xtrain": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "X_train"
+                      }
+                    }
+                  },
+                  "ytest": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "y_test"
+                      }
+                    }
+                  },
+                  "ytrain": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "y_train"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "model-component"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "parameters": {
+            "pipelineparam--accuracy_threshold": {
+              "type": "DOUBLE"
+            },
+            "pipelineparam--bucket": {
+              "type": "STRING"
+            },
+            "pipelineparam--data-component-Output": {
+              "type": "INT"
+            }
+          }
+        }
+      },
+      "comp-condition-accuracy-50-2": {
+        "dag": {
+          "tasks": {
+            "true-component": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-true-component"
+              },
+              "inputs": {
+                "parameters": {
+                  "accuracy": {
+                    "componentInputParameter": "pipelineparam--model-component-Output"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "true-component"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "parameters": {
+            "pipelineparam--accuracy_threshold": {
+              "type": "DOUBLE"
+            },
+            "pipelineparam--data-component-Output": {
+              "type": "INT"
+            },
+            "pipelineparam--model-component-Output": {
+              "type": "DOUBLE"
+            }
+          }
+        }
+      },
+      "comp-condition-accuracy-50-3": {
+        "dag": {
+          "tasks": {
+            "false-component": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-false-component"
+              },
+              "inputs": {
+                "parameters": {
+                  "accuracy": {
+                    "componentInputParameter": "pipelineparam--model-component-Output"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "false-component"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "parameters": {
+            "pipelineparam--accuracy_threshold": {
+              "type": "DOUBLE"
+            },
+            "pipelineparam--data-component-Output": {
+              "type": "INT"
+            },
+            "pipelineparam--model-component-Output": {
+              "type": "DOUBLE"
+            }
+          }
+        }
+      },
+      "comp-data-component": {
+        "executorLabel": "exec-data-component",
+        "inputDefinitions": {
+          "parameters": {
+            "bucket": {
+              "type": "STRING"
+            },
+            "marker": {
+              "type": "INT"
+            },
+            "value": {
+              "type": "DOUBLE"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "parameters": {
+            "Output": {
+              "type": "INT"
+            }
+          }
+        }
+      },
+      "comp-false-component": {
+        "executorLabel": "exec-false-component",
+        "inputDefinitions": {
+          "parameters": {
+            "accuracy": {
+              "type": "DOUBLE"
+            }
+          }
+        }
+      },
+      "comp-model-component": {
+        "executorLabel": "exec-model-component",
+        "inputDefinitions": {
+          "parameters": {
+            "bucket": {
+              "type": "STRING"
+            },
+            "xtest": {
+              "type": "STRING"
+            },
+            "xtrain": {
+              "type": "STRING"
+            },
+            "ytest": {
+              "type": "STRING"
+            },
+            "ytrain": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "parameters": {
+            "Output": {
+              "type": "DOUBLE"
+            }
+          }
+        }
+      },
+      "comp-true-component": {
+        "executorLabel": "exec-true-component",
+        "inputDefinitions": {
+          "parameters": {
+            "accuracy": {
+              "type": "DOUBLE"
+            }
+          }
+        }
+      }
+    },
+    "deploymentSpec": {
+      "executors": {
+        "exec-data-component": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "data_component"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'numpy' 'pandas' 'google-cloud-storage==1.43.0' 'google-cloud-aiplatform==1.0.0' 'kubeflow-metadata' 'scikit-learn' 'gcsfs==2021.11.1' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef data_component(bucket: str, value: float, marker: int) -> int:\n    import kfp\n    import pandas as pd\n    import sklearn\n    from sklearn.model_selection import train_test_split\n    from kfp.v2.google.client import AIPlatformClient\n    from google.cloud import storage\n\n    # read data from gcs bucket\n    data = pd.read_csv('gs://iris-kfp/iris.csv', index_col=False) \n\n    # data preprocessing\n    # normalizing data\n    df = data\n    for column in df.columns:\n        df[column] = (df[column] - df[column].mean()) / df[column].std() \n    data = df\n    # dependent and independent data sets\n    train_data = data.drop('class',axis=1)\n    test_data = data['class']    \n\n    # test-train  data split\n    X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(train_data, test_data, test_size = value, random_state=42)\n    X_train = X_train.to_csv()\n    X_test = X_test.to_csv()\n    y_train = y_train.to_csv()\n    y_test = y_test.to_csv()\n\n    # storage client\n    storage_client = storage.Client()\n    bucket = storage_client.get_bucket('iris-kfp')\n    # blobs\n    d1 = bucket.blob('X_train.csv')\n    d2 = bucket.blob('X_test.csv')\n    d3 = bucket.blob('y_train.csv')\n    d4 = bucket.blob('y_test.csv')\n\n    # uploading train-test datasets into gcs bucket\n    d1.upload_from_string(f'{X_train}.csv', 'text/csv')\n    d2.upload_from_string(f'{X_test}.csv', 'text/csv')\n    d3.upload_from_string(f'{y_train}.csv', 'text/csv')\n    d4.upload_from_string(f'{y_test}.csv', 'text/csv')\n\n    # setting flag\n    df1 = pd.read_csv(\"gs://iris-kfp/X_train.csv\", index_col=0)\n    df2 = pd.read_csv(\"gs://iris-kfp/X_test.csv\", index_col=0)\n    df3 = pd.read_csv(\"gs://iris-kfp/y_train.csv\", index_col=0)\n    df4 = pd.read_csv(\"gs://iris-kfp/y_test.csv\", index_col=0)\n\n    if(df1.empty == True and df2.empty == True and df3.empty == True and df4.empty == True):\n        marker = 1\n    else:\n        marker = 0\n\n    return marker\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-false-component": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "false_component"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'numpy' 'pandas' 'google-cloud-storage==1.43.0' 'google-cloud-aiplatform==1.0.0' 'kubeflow-metadata' 'scikit-learn' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef false_component(accuracy:float) -> None:\n    print(f'No. {accuracy} is the Accuracy and its smaller than the threshold')\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-model-component": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "model_component"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'numpy' 'pandas' 'google-cloud-storage==1.43.0' 'google-cloud-aiplatform==1.0.0' 'kubeflow-metadata' 'scikit-learn' 'gcsfs==2021.11.1' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef model_component(bucket:str, xtrain:str, ytrain:str, xtest:str, ytest:str) -> float:\n    import pandas as pd    \n    from sklearn.ensemble import RandomForestClassifier\n    from sklearn.metrics import accuracy_score\n\n    # read test-train data sets from GCS bucket\n    X_train = pd.read_csv(f'{bucket}/{xtrain}.csv', sep=\",\")\n    y_train = pd.read_csv(f'{bucket}/{ytrain}.csv', sep=\",\")\n    X_test = pd.read_csv(f'{bucket}/{xtest}.csv', sep=\",\")\n    y_test = pd.read_csv(f'{bucket}/{ytest}.csv', sep=\",\")    \n\n    # train model\n    model = RandomForestClassifier(max_depth=2, random_state=3)\n    model.fit(X_train, y_train)\n    predictions = model.predict(X_test)\n\n    # find accuracy\n    accuracy = accuracy_score(y_test, predictions)\n\n    return accuracy\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-true-component": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "true_component"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'numpy' 'pandas' 'google-cloud-storage==1.43.0' 'google-cloud-aiplatform==1.0.0' 'kubeflow-metadata' 'scikit-learn' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef true_component(accuracy:float) -> None:\n    print(f'Yes!! {accuracy} is the Accuracy and its greater than the threshold')\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        }
+      }
+    },
+    "pipelineInfo": {
+      "name": "iris-pipeline"
+    },
+    "root": {
+      "dag": {
+        "tasks": {
+          "condition-1": {
+            "componentRef": {
+              "name": "comp-condition-1"
+            },
+            "dependentTasks": [
+              "data-component"
+            ],
+            "inputs": {
+              "parameters": {
+                "pipelineparam--accuracy_threshold": {
+                  "componentInputParameter": "accuracy_threshold"
+                },
+                "pipelineparam--bucket": {
+                  "componentInputParameter": "bucket"
+                },
+                "pipelineparam--data-component-Output": {
+                  "taskOutputParameter": {
+                    "outputParameterKey": "Output",
+                    "producerTask": "data-component"
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "condition-1"
+            },
+            "triggerPolicy": {
+              "condition": "inputs.parameters['pipelineparam--data-component-Output'].int_value == 1"
+            }
+          },
+          "data-component": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-data-component"
+            },
+            "inputs": {
+              "parameters": {
+                "bucket": {
+                  "componentInputParameter": "bucket"
+                },
+                "marker": {
+                  "componentInputParameter": "marker"
+                },
+                "value": {
+                  "componentInputParameter": "test_train_split_ratio"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "data-component"
+            }
+          }
+        }
+      },
+      "inputDefinitions": {
+        "parameters": {
+          "accuracy_threshold": {
+            "type": "DOUBLE"
+          },
+          "api_endpoint": {
+            "type": "STRING"
+          },
+          "bucket": {
+            "type": "STRING"
+          },
+          "display_name": {
+            "type": "STRING"
+          },
+          "gcp_region": {
+            "type": "STRING"
+          },
+          "marker": {
+            "type": "INT"
+          },
+          "project": {
+            "type": "STRING"
+          },
+          "test_train_split_ratio": {
+            "type": "DOUBLE"
+          }
+        }
+      }
+    },
+    "schemaVersion": "2.0.0",
+    "sdkVersion": "kfp-1.8.10"
+  },
+  "runtimeConfig": {
+    "gcsOutputDirectory": "gs://diab-gsbucket/pipeline_root/",
+    "parameters": {
+      "accuracy_threshold": {
+        "doubleValue": 0.5
+      },
+      "api_endpoint": {
+        "stringValue": "us-central1-aiplatform.googleapis.com"
+      },
+      "bucket": {
+        "stringValue": "gs://iris-kfp"
+      },
+      "display_name": {
+        "stringValue": "iris-kfp"
+      },
+      "gcp_region": {
+        "stringValue": "us-central1"
+      },
+      "marker": {
+        "intValue": "0"
+      },
+      "project": {
+        "stringValue": "kedro-kubeflow-334417"
+      },
+      "test_train_split_ratio": {
+        "doubleValue": 0.3
+      }
+    }
+  }
+}
